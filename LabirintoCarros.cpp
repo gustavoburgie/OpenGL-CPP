@@ -41,6 +41,7 @@ using namespace std;
 
 #include "Ponto.h"
 #include "Poligono.h"
+#include "Bezier.h"
 
 #include "Temporizador.h"
 
@@ -50,6 +51,9 @@ using namespace std;
 Ponto Min, Max;
 
 Poligono Poly, ControleP, CurvasP;
+
+vector <Ponto> vetPontos;
+vector <Bezier> vetBez;
 
 bool desenha = false;
 
@@ -63,16 +67,34 @@ float dist = 0.00001;
 // **********************************************************************
 //
 // **********************************************************************
+void conectaCurvas(){
+    for(int i = 0; i < CurvasP.getNVertices(); i++){
+        vetBez.insert(vetBez.begin() + i, Bezier(ControleP.getVertice(CurvasP.getVertice(i).x)
+        , ControleP.getVertice(CurvasP.getVertice(i).y)
+        , ControleP.getVertice(CurvasP.getVertice(i).z)));
+    }
+}
+
 void init()
 {
     ControleP.LePoligono("./entradas/PontosControle.txt");
     CurvasP.LePoligono("./entradas/Curvas.txt");
 
+    conectaCurvas();
+
+    for(int i = 0; i < vetBez.size(); i++){
+        cout << "P" << i << ":";
+            for(int j = 0; j < 3; j++){
+                cout << " ";
+                vetBez.at(i).getPC(j).imprime();
+            }
+        cout << "\n" << endl;
+    }
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     
-    Min = Ponto (-100, -100);
-    Max = Ponto (100, 100);
+    Min = Ponto (-5, -5);
+    Max = Ponto (5, 5);
 
     Poly.LePoligono("./entradas/Retangulo1x1.txt");
 }
@@ -110,6 +132,8 @@ void animate()
 
 
 }
+
+
 // **********************************************************************
 //  void reshape( int w, int h )
 //  trata o redimensionamento da janela OpenGL
@@ -185,11 +209,17 @@ void display( void )
 	// Coloque aqui as chamadas das rotinas que desenham os objetos
 	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     
-    defineCor(Green);
-    Poly.desenhaPoligono();
-
     glColor3f(0,0,0); // R, G, B  [0..1]
     DesenhaEixos();
+    
+    defineCor(Green);
+
+    // for(int i = 0; i<nVertices-3; i++){
+    //     vetBez.push_back(Bezier(CurvasP.getVertice(i), CurvasP.getVertice(i+1), CurvasP.getVertice(i+2)));
+    // }
+    for(int i = 0; i<vetBez.size(); i++){
+        vetBez.at(i).Traca();
+    }
     
     if (FoiClicado)
     {
