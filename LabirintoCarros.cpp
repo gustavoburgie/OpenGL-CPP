@@ -67,20 +67,39 @@ float dist = 0.00001;
 // **********************************************************************
 //
 // **********************************************************************
-void conectaCurvas(){
-    for(int i = 0; i < CurvasP.getNVertices(); i++){
-        vetBez.insert(vetBez.begin() + i, Bezier(ControleP.getVertice(CurvasP.getVertice(i).x)
-        , ControleP.getVertice(CurvasP.getVertice(i).y)
-        , ControleP.getVertice(CurvasP.getVertice(i).z)));
+void leCurvas(const char *nome){
+    ifstream input;
+    input.open(nome, ios::in);
+    if(!input)
+    {
+        cout << "Erro ao abrir " << nome << ". " << endl;
+        exit(0);
     }
+    cout << "Lendo arquivo " << nome << "...";
+
+    int qntCurvas;
+    input >> qntCurvas;
+
+    for(int i = 0; i < qntCurvas; i++){
+        int in1, in2, in3;
+
+        input >> in1 >> in2 >> in3;
+
+        Ponto p1 = ControleP.getVertice(in1);
+        Ponto p2 = ControleP.getVertice(in2);
+        Ponto p3 = ControleP.getVertice(in3);
+        vetBez.insert(vetBez.begin() + i, Bezier(p1,p2,p3));
+    }
+    
+    input.close();
+    cout << "Curvas lidas com sucesso.\n" << endl;
 }
 
 void init()
 {
     ControleP.LePoligono("./entradas/PontosControle.txt");
-    CurvasP.LePoligono("./entradas/Curvas.txt");
+    leCurvas("./entradas/Curvas.txt");
 
-    conectaCurvas();
 
     for(int i = 0; i < vetBez.size(); i++){
         cout << "P" << i << ":";
