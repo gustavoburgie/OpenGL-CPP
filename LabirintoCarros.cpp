@@ -58,8 +58,6 @@ float angulo=0.0;
 Ponto PosicaoDoCampoDeVisao, PontoClicado;
 bool FoiClicado = false;
 
-Ponto P1, P2, P3, P4;
-Ponto T1;
 float dist = 0.00001;
 
 // **********************************************************************
@@ -68,7 +66,8 @@ float dist = 0.00001;
 void init()
 {
     ControleP.LePoligono("./entradas/PontosControle.txt");
-    
+    CurvasP.LePoligono("./entradas/Curvas.txt");
+
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     
@@ -76,15 +75,6 @@ void init()
     Max = Ponto (100, 100);
 
     Poly.LePoligono("./entradas/Retangulo1x1.txt");
-    
-    
-    //defineCor(GreenYellow);
-    P1 = Ponto(-10,-10);
-    P2 = Ponto(-10, 10);
-    P3 = Ponto(10, -10);
-    P4 = Ponto(10, 10);
-    
-    T1 = Ponto(-50.0, -4.0);
 }
 
 double nFrames=0;
@@ -117,11 +107,6 @@ void animate()
         TempoTotal = 0;
         nFrames = 0;
     }
-    
-    if(T1.x >= Max.x || T1.x <= Min.x){
-        dist = dist * -1;
-    }
-    T1.x += dist;
 
 
 }
@@ -202,23 +187,6 @@ void display( void )
     
     defineCor(Green);
     Poly.desenhaPoligono();
-    
-    
-    defineCor(Red);
-    glPushMatrix();
-        DesenhaTriangulo(P1, P2, P3);
-    glPopMatrix();
-    
-    defineCor(Orange);
-    glPushMatrix();
-        glTranslatef(T1.x, 0.0, 0.0);
-        DesenhaTriangulo(P1, P2, P3);
-        DesenhaTriangulo(P2, P3, P4);
-    glPopMatrix();
-
-    glPushMatrix();
-    glRotatef(angulo, 0, 0, 1);
-    glPopMatrix();
 
     glColor3f(0,0,0); // R, G, B  [0..1]
     DesenhaEixos();
@@ -301,7 +269,7 @@ void keyboard ( unsigned char key, int x, int y )
             ContaTempo(3);
             break;
         case ' ':
-            desenha = !desenha;
+
         break;
 		default:
 			break;
@@ -353,7 +321,7 @@ int  main ( int argc, char** argv )
 
     // Cria a janela na tela, definindo o nome da
     // que aparecera na barra de titulo da janela.
-    glutCreateWindow    ( "Primeiro Programa em OpenGL" );
+    glutCreateWindow    ( "Labirinto de Carros" );
 
     // executa algumas inicializa��es
     init ();
