@@ -49,7 +49,7 @@ using namespace std;
 // Limites logicos da area de desenho
 Ponto Min, Max;
 
-Poligono Poly;
+Poligono Poly, ControleP, CurvasP;
 
 bool desenha = false;
 
@@ -58,29 +58,32 @@ float angulo=0.0;
 Ponto PosicaoDoCampoDeVisao, PontoClicado;
 bool FoiClicado = false;
 
-Ponto P1, P2, P3;
+Ponto P1, P2, P3, P4;
 Ponto T1;
-float dist = 0.0001;
+float dist = 0.00001;
 
 // **********************************************************************
 //
 // **********************************************************************
 void init()
 {
+    ControleP.LePoligono("./entradas/PontosControle.txt");
     
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-
+    
     Min = Ponto (-100, -100);
     Max = Ponto (100, 100);
 
-    Poly.LePoligono("Retangulo1x1.txt");
-
+    Poly.LePoligono("./entradas/Retangulo1x1.txt");
+    
+    
     //defineCor(GreenYellow);
     P1 = Ponto(-10,-10);
-    P2 = Ponto(0, 10);
+    P2 = Ponto(-10, 10);
     P3 = Ponto(10, -10);
-
+    P4 = Ponto(10, 10);
+    
     T1 = Ponto(-50.0, -4.0);
 }
 
@@ -114,11 +117,13 @@ void animate()
         TempoTotal = 0;
         nFrames = 0;
     }
-
+    
     if(T1.x >= Max.x || T1.x <= Min.x){
         dist = dist * -1;
     }
     T1.x += dist;
+
+
 }
 // **********************************************************************
 //  void reshape( int w, int h )
@@ -149,11 +154,11 @@ void DesenhaEixos()
     Meio.x = (Max.x+Min.x)/2;
     Meio.y = (Max.y+Min.y)/2;
     Meio.z = (Max.z+Min.z)/2;
-
+    
     glBegin(GL_LINES);
     //  eixo horizontal
-        glVertex2f(Min.x,Meio.y);
-        glVertex2f(Max.x,Meio.y);
+    glVertex2f(Min.x,Meio.y);
+    glVertex2f(Max.x,Meio.y);
     //  eixo vertical
         glVertex2f(Meio.x,Min.y);
         glVertex2f(Meio.x,Max.y);
@@ -168,7 +173,7 @@ void DesenhaTriangulo(Ponto A, Ponto B, Ponto C)
         glVertex2f(A.x, A.y);
         glVertex2f(B.x, B.y);
         glVertex2f(C.x, C.y);
-    glEnd();
+        glEnd();
 }
 // **********************************************************************
 void RotacionaAoRedorDeUmPonto(float alfa, Ponto P)
@@ -183,19 +188,21 @@ void RotacionaAoRedorDeUmPonto(float alfa, Ponto P)
 // **********************************************************************
 void display( void )
 {
-
-	// Limpa a tela coma cor de fundo
+    
+    // Limpa a tela coma cor de fundo
 	glClear(GL_COLOR_BUFFER_BIT);
 
     // Define os limites logicos da area OpenGL dentro da Janela
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
+    
 	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	// Coloque aqui as chamadas das rotinas que desenham os objetos
 	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
+    
+    defineCor(Green);
+    Poly.desenhaPoligono();
+    
     
     defineCor(Red);
     glPushMatrix();
@@ -204,12 +211,16 @@ void display( void )
     
     defineCor(Orange);
     glPushMatrix();
-        glTranslatef(T1.x, T1.y, 0.0);
+        glTranslatef(T1.x, 0.0, 0.0);
         DesenhaTriangulo(P1, P2, P3);
+        DesenhaTriangulo(P2, P3, P4);
     glPopMatrix();
 
+    glPushMatrix();
+    glRotatef(angulo, 0, 0, 1);
+    glPopMatrix();
 
-    glColor3f(1,1,1); // R, G, B  [0..1]
+    glColor3f(0,0,0); // R, G, B  [0..1]
     DesenhaEixos();
     
     if (FoiClicado)
