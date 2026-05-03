@@ -1,11 +1,11 @@
 # Makefile para Linux e macOS
 
-PROG = ProgOpenGL
+PROG = Labirinto
 #FONTES = Linha.cpp Ponto.cpp InterseccaoEntreTodasAsLinhas.cpp Temporizador.cpp
 #FONTES = Ponto.cpp Poligono.cpp Temporizador.cpp ListaDeCoresRGB.cpp ProgramaBasicoOpenGL.cpp 
 #FONTES = ExemploDeManipulacaoDeImagens.cpp ImageClass.cpp Temporizador.cpp SOIL/SOIL.cpp SOIL/image_DXT.cpp SOIL/image_helper.cpp SOIL/stb_image_aug.cpp
 
-FONTES = Ponto.cpp Poligono.cpp Temporizador.cpp ListaDeCoresRGB.cpp ProgramaBasicoOpenGL1.cpp
+FONTES = Ponto.cpp Poligono.cpp Temporizador.cpp ListaDeCoresRGB.cpp LabirintoCarros.cpp
 
 #FONTES = Ponto.cpp Poligono.cpp Temporizador.cpp ListaDeCoresRGB.cpp Bezier.cpp DesenhaBezier.cpp
 
