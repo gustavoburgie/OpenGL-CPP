@@ -5,22 +5,28 @@ using namespace std;
 
 #include "Ponto.h"
 #include "Bezier.h"
+#include "ListaDeCoresRGB.h"
+
+typedef void TipoFuncao();
 
 class InstanciaBZ{
 
 public:
-    InstanciaBZ();
-    InstanciaBZ(Bezier *Curva); // Cria uma instancia e associa uma cruza a ela
-    //TipoFuncao *modelo; // Referencia para a funcao que desenha o modelo
-    Bezier *Curva; // referencia para a curva onde esta' a instancia
-    Ponto Posicao, Escala;
-    float Rotacao;
-    int nroDaCurva; // Nro da curva onde esta' o personagem
-    int proxCurva; // Nro da curva para onde ira' o personagem
-    int cor;
-    float Velocidade;
-    float tAtual; // Valor do t onde esta' o personagem
-    int direcao; // Andando do fim para o inicio, ou ao contrario
+    InstanciaBZ() = default;
+    InstanciaBZ(Bezier *Curva);     // Cria uma instancia e associa uma cruza a ela
+
+    TipoFuncao *modelo = nullptr;   // Referencia para a funcao que desenha o modelo
+    Bezier *Curva = nullptr;        // referencia para a curva onde esta' a instancia
+    Ponto Posicao = Ponto(0,0,0);
+    Ponto Escala = Ponto(1,1,1);
+    float Rotacao = 0;
+    int nroDaCurva = 0;             // Nro da curva onde esta' o personagem
+    int proxCurva = 0;              // Nro da curva para onde ira' o personagem
+    int cor = Green;
+    float Velocidade = 0;
+    float tAtual = 0;               // Valor do t onde esta' o personagem
+    int direcao = 0;                // Andando do fim para o inicio, ou ao contrario
+    
     void desenha();
     void AtualizaPosicao(float tempoDecorrido);
     Ponto ObtemPosicao();

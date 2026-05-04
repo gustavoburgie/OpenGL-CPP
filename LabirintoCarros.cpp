@@ -50,7 +50,7 @@ using namespace std;
 // Limites logicos da area de desenho
 Ponto Min, Max;
 
-Poligono Poly, ControleP, CurvasP;
+Poligono Poly, ControleP, Carro;
 
 vector <Ponto> vetPontos;
 vector <Bezier> vetBez;
@@ -90,7 +90,7 @@ void leCurvas(const char *nome){
         Ponto p3 = ControleP.getVertice(in3);
         vetBez.insert(vetBez.begin() + i, Bezier(p1,p2,p3));
     }
-    
+
     input.close();
     cout << "Curvas lidas com sucesso.\n" << endl;
 }
@@ -99,6 +99,8 @@ void init()
 {
     ControleP.LePoligono("./entradas/PontosControle.txt");
     leCurvas("./entradas/Curvas.txt");
+
+    Carro.LePoligono("./entradas/Carro.txt");
 
 
     for(int i = 0; i < vetBez.size(); i++){
@@ -110,7 +112,7 @@ void init()
         cout << "\n" << endl;
     }
     // Define a cor do fundo da tela (AZUL)
-    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClearColor(0.0f, 0.14f, 0.14f, 1.0f);
     
     Min = Ponto (-5, -5);
     Max = Ponto (5, 5);
@@ -233,18 +235,20 @@ void display( void )
     
     defineCor(Green);
 
-    // for(int i = 0; i<nVertices-3; i++){
-    //     vetBez.push_back(Bezier(CurvasP.getVertice(i), CurvasP.getVertice(i+1), CurvasP.getVertice(i+2)));
-    // }
     for(int i = 0; i<vetBez.size(); i++){
         vetBez.at(i).Traca();
     }
     
+    Carro.desenhaPoligono();
+
     if (FoiClicado)
     {
         PontoClicado.imprime("- Ponto no universo: ", "\n");
         FoiClicado = false;
     }
+
+    glRotatef(angulo, 0, 0, 1);
+    Carro.desenhaPoligono();
     
 	glutSwapBuffers();
 }
