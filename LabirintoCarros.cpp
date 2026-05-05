@@ -149,6 +149,7 @@ void instanciaCarros(){
     player = InstanciaBZ(&vetBez.at(0));
     player.modelo = desenhaCarro;   //associa a func desenhaPoligono as instancias
     player.Velocidade = velocidade_g;
+    player.cor = Green;
 
     //=========== INIMIGOS ===========
     for(int i = 0; i < N_INSTANCIAS; i++){
