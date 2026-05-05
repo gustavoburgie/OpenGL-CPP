@@ -144,20 +144,12 @@ void SorteiaProximaCurva(InstanciaBZ &inst) {
     }
 }
 
-void init()
-{
-    ControleP.LePoligono("./entradas/PontosControle.txt");
-    leCurvas("./entradas/Curvas.txt");
-
-    Carro.LePoligono("./entradas/Carro.txt");
-
-    /* =======================
-           INSTANCIAMENTOS
-       ======================= */
+void instanciaCarros(){
     player = InstanciaBZ(&vetBez.at(0));
     player.modelo = desenhaCarro;   //associa a func desenhaPoligono as instancias
     player.Velocidade = velocidade_g;
 
+    //=========== INIMIGOS ===========
     for(int i = 0; i < N_INSTANCIAS; i++){
         inimigos.push_back(InstanciaBZ(&vetBez.at(i + 1)));
     }
@@ -166,11 +158,19 @@ void init()
         inimigos.at(i).modelo = desenhaCarro;
         inimigos.at(i).nroDaCurva = i + 1;
         inimigos.at(i).Velocidade = velocidade_g;
-        if(i == inimigos.size()/2)
+        if(i >= inimigos.size()/2)
         inimigos.at(i).direcao = -1;
     }
-    /* =======================
-       ======================= */
+}
+
+void init()
+{
+    ControleP.LePoligono("./entradas/PontosControle.txt");
+    leCurvas("./entradas/Curvas.txt");
+
+    Carro.LePoligono("./entradas/Carro.txt");
+
+    instanciaCarros();
 
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.14f, 0.14f, 1.0f);
@@ -303,11 +303,12 @@ void display( void )
     
     glColor3f(0,0,0); // R, G, B  [0..1]
     DesenhaEixos();
-    
-    defineCor(Green);
 
     for(int i = 0; i<vetBez.size(); i++){
+        glPushMatrix();
+        defineCor(Green);
         vetBez.at(i).Traca();
+        glPopMatrix();
     }
     
     player.desenha();
@@ -400,6 +401,7 @@ void keyboard ( unsigned char key, int x, int y )
             player.Velocidade = velocidade_g;
         break;
 		default:
+            player.direcao *= -1;
 			break;
 	}
 }
