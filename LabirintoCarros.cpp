@@ -47,6 +47,10 @@ using namespace std;
 
 #include "ListaDeCoresRGB.h"
 
+#include "InstanciaBZ.h"
+
+#define N_INSTANCIAS 10
+
 // Limites logicos da area de desenho
 Ponto Min, Max;
 
@@ -55,11 +59,11 @@ Poligono Poly, ControleP, Carro;
 vector <Ponto> vetPontos;
 vector <Bezier> vetBez;
 
-bool desenha = false;
+InstanciaBZ player, inimigo;
 
 float angulo=0.0;
 
-Ponto PosicaoDoCampoDeVisao, PontoClicado;
+Ponto PontoClicado;
 bool FoiClicado = false;
 
 float dist = 0.00001;
@@ -95,6 +99,10 @@ void leCurvas(const char *nome){
     cout << "Curvas lidas com sucesso.\n" << endl;
 }
 
+void desenhaCarro(){
+    Carro.desenhaPoligono();
+}
+
 void init()
 {
     ControleP.LePoligono("./entradas/PontosControle.txt");
@@ -102,22 +110,25 @@ void init()
 
     Carro.LePoligono("./entradas/Carro.txt");
 
+    player = InstanciaBZ(&vetBez.at(0));
+    player.modelo = desenhaCarro;   //associa a func desenhaPoligono as instancias
 
-    for(int i = 0; i < vetBez.size(); i++){
-        cout << "P" << i << ":";
-            for(int j = 0; j < 3; j++){
-                cout << " ";
-                vetBez.at(i).getPC(j).imprime();
-            }
-        cout << "\n" << endl;
-    }
+
+    // Imprime pontos lidos das curvas
+    // for(int i = 0; i < vetBez.size(); i++){
+    //     cout << "P" << i << ":";
+    //         for(int j = 0; j < 3; j++){
+    //             cout << " ";
+    //             vetBez.at(i).getPC(j).imprime();
+    //         }
+    //     cout << "\n" << endl;
+    // }
+
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.14f, 0.14f, 1.0f);
     
     Min = Ponto (-5, -5);
     Max = Ponto (5, 5);
-
-    Poly.LePoligono("./entradas/Retangulo1x1.txt");
 }
 
 double nFrames=0;
@@ -132,6 +143,12 @@ void animate()
 {
     double dt;
     dt = T.getDeltaT();
+    
+    if(dt >= 0.0005)    //possivelmente remover depois =====================================
+    dt = 0.0005;
+
+    player.AtualizaPosicao(dt);
+
     AccumDeltaT += dt;
     TempoTotal += dt;
     nFrames++;
@@ -239,16 +256,14 @@ void display( void )
         vetBez.at(i).Traca();
     }
     
-    Carro.desenhaPoligono();
+    player.desenha();
+
 
     if (FoiClicado)
     {
         PontoClicado.imprime("- Ponto no universo: ", "\n");
         FoiClicado = false;
     }
-
-    glRotatef(angulo, 0, 0, 1);
-    Carro.desenhaPoligono();
     
 	glutSwapBuffers();
 }

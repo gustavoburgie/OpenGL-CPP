@@ -22,13 +22,13 @@ public:
     float Rotacao = 0;
     int nroDaCurva = 0;             // Nro da curva onde esta' o personagem
     int proxCurva = 0;              // Nro da curva para onde ira' o personagem
-    int cor = Green;
-    float Velocidade = 0;
+    int cor = rand() % 100;
+    float Velocidade = 1;
     float tAtual = 0;               // Valor do t onde esta' o personagem
-    int direcao = 0;                // Andando do fim para o inicio, ou ao contrario
+    int direcao = 1;                // Andando do fim para o inicio, ou ao contrario
     
     void desenha();
-    void AtualizaPosicao(float tempoDecorrido);
+    void AtualizaPosicao(double tempoDecorrido);
     Ponto ObtemPosicao();
 };
 
