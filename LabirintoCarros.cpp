@@ -61,6 +61,7 @@ vector <Bezier> vetBez;
 vector <vector <int>> vetCurvasBez;
 
 int qntCurvas;
+int velocidade_g = 1;
 
 InstanciaBZ player;
 vector <InstanciaBZ> inimigos;
@@ -150,18 +151,26 @@ void init()
 
     Carro.LePoligono("./entradas/Carro.txt");
 
+    /* =======================
+           INSTANCIAMENTOS
+       ======================= */
     player = InstanciaBZ(&vetBez.at(0));
     player.modelo = desenhaCarro;   //associa a func desenhaPoligono as instancias
+    player.Velocidade = velocidade_g;
 
-    // Imprime pontos lidos das curvas
-    // for(int i = 0; i < vetBez.size(); i++){
-    //     cout << "P" << i << ":";
-    //         for(int j = 0; j < 3; j++){
-    //             cout << " ";
-    //             vetBez.at(i).getPC(j).imprime();
-    //         }
-    //     cout << "\n" << endl;
-    // }
+    for(int i = 0; i < N_INSTANCIAS; i++){
+        inimigos.push_back(InstanciaBZ(&vetBez.at(i + 1)));
+    }
+
+    for(int i = 0; i < inimigos.size(); i++){
+        inimigos.at(i).modelo = desenhaCarro;
+        inimigos.at(i).nroDaCurva = i + 1;
+        inimigos.at(i).Velocidade = velocidade_g;
+        if(i == inimigos.size()/2)
+        inimigos.at(i).direcao = -1;
+    }
+    /* =======================
+       ======================= */
 
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.14f, 0.14f, 1.0f);
@@ -183,10 +192,16 @@ void animate()
     double dt;
     dt = T.getDeltaT();
 
-
+    /* =======================
+            ATUALIZAÇÕES
+       ======================= */
     player.AtualizaPosicao(dt);
 
-    
+    for(int i = 0; i < inimigos.size(); i++){
+        inimigos.at(i).AtualizaPosicao(dt);
+    }
+    /* =======================
+       ======================= */
 
     AccumDeltaT += dt;
     TempoTotal += dt;
@@ -297,6 +312,9 @@ void display( void )
     
     player.desenha();
 
+    for(int i = 0; i < inimigos.size(); i++){
+        inimigos.at(i).desenha();
+    }
 
     if (FoiClicado)
     {
@@ -376,7 +394,10 @@ void keyboard ( unsigned char key, int x, int y )
             ContaTempo(3);
             break;
         case ' ':
-            player.direcao *= -1;
+            if(player.Velocidade != 0)
+            player.Velocidade = 0;
+            else
+            player.Velocidade = velocidade_g;
         break;
 		default:
 			break;
