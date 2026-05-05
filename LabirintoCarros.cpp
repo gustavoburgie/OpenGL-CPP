@@ -107,7 +107,6 @@ void leCurvas(const char *nome){
 }
 
 void desenhaCarro(){
-    glLineWidth((GLfloat)1.0);
     Carro.desenhaPoligono();
 }
 
