@@ -25,8 +25,11 @@ public:
     int cor = rand() % 100;
     float Velocidade = 1;
     float tAtual = 0;               // Valor do t onde esta' o personagem
-    int direcao = 1;                // Andando do fim para o inicio, ou ao contrario
+    int direcao = 1;                // Andando do fim para o inicio, ou ao contrario (-1)
     
+    int proxDirecao = 1;
+    bool jaSorteou = false;
+
     void desenha();
     void AtualizaPosicao(double tempoDecorrido);
     Ponto ObtemPosicao();

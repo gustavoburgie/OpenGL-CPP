@@ -58,8 +58,12 @@ Poligono Poly, ControleP, Carro;
 
 vector <Ponto> vetPontos;
 vector <Bezier> vetBez;
+vector <vector <int>> vetCurvasBez;
 
-InstanciaBZ player, inimigo;
+int qntCurvas;
+
+InstanciaBZ player;
+vector <InstanciaBZ> inimigos;
 
 float angulo=0.0;
 
@@ -81,13 +85,15 @@ void leCurvas(const char *nome){
     }
     cout << "Lendo arquivo " << nome << "...";
 
-    int qntCurvas;
+    // int qntCurvas;
     input >> qntCurvas;
 
     for(int i = 0; i < qntCurvas; i++){
         int in1, in2, in3;
 
         input >> in1 >> in2 >> in3;
+
+        vetCurvasBez.push_back({in1, in2, in3});    //pega só os indices
 
         Ponto p1 = ControleP.getVertice(in1);
         Ponto p2 = ControleP.getVertice(in2);
@@ -103,6 +109,40 @@ void desenhaCarro(){
     Carro.desenhaPoligono();
 }
 
+void SorteiaProximaCurva(InstanciaBZ &inst) {
+    int indiceDestino;
+    
+    if (inst.direcao == 1)
+    indiceDestino = vetCurvasBez[inst.nroDaCurva][2];   //se indo pra frente, pega o ultimo ponto da curva
+    else
+    indiceDestino = vetCurvasBez[inst.nroDaCurva][0];   //se não, pega o primeiro ponto
+
+    vector<int> opcoesCurvas;
+    vector<int> opcoesDirecoes;
+
+    for (int i = 0; i < vetCurvasBez.size(); i++){
+        if(i == inst.nroDaCurva)
+        continue;     //ignora a curva atual
+
+        if(vetCurvasBez[i][0] == indiceDestino){
+            //se a curva começa nesse ponto, entra nela indo pra frente
+            opcoesCurvas.push_back(i);
+            opcoesDirecoes.push_back(1); 
+        } 
+        else if(vetCurvasBez[i][2] == indiceDestino){
+            //se a curva termina nesse ponto, entra nela indo pra trás
+            opcoesCurvas.push_back(i);
+            opcoesDirecoes.push_back(-1); 
+        }
+    }
+
+    if(opcoesCurvas.size() > 0){
+        int sorteio = rand() % opcoesCurvas.size();
+        inst.proxCurva = opcoesCurvas[sorteio];
+        inst.proxDirecao = opcoesDirecoes[sorteio];
+    }
+}
+
 void init()
 {
     ControleP.LePoligono("./entradas/PontosControle.txt");
@@ -112,7 +152,6 @@ void init()
 
     player = InstanciaBZ(&vetBez.at(0));
     player.modelo = desenhaCarro;   //associa a func desenhaPoligono as instancias
-
 
     // Imprime pontos lidos das curvas
     // for(int i = 0; i < vetBez.size(); i++){
@@ -143,11 +182,11 @@ void animate()
 {
     double dt;
     dt = T.getDeltaT();
-    
-    if(dt >= 0.0005)    //possivelmente remover depois =====================================
-    dt = 0.0005;
+
 
     player.AtualizaPosicao(dt);
+
+    
 
     AccumDeltaT += dt;
     TempoTotal += dt;
@@ -337,7 +376,7 @@ void keyboard ( unsigned char key, int x, int y )
             ContaTempo(3);
             break;
         case ' ':
-
+            player.direcao *= -1;
         break;
 		default:
 			break;

@@ -1,6 +1,10 @@
 #include "InstanciaBZ.h"
 #include "Poligono.h"
 #include "unistd.h"
+#include "Ponto.h"
+
+void SorteiaProximaCurva(InstanciaBZ &inst);
+extern vector <Bezier> vetBez;
 
 InstanciaBZ::InstanciaBZ(Bezier *curva) : InstanciaBZ(){
     Curva = curva;
@@ -11,42 +15,59 @@ Ponto InstanciaBZ::ObtemPosicao(){
 }
 
 void InstanciaBZ::AtualizaPosicao(double tempoDecorrido){
-    //atualizar o ponto de alguma forma em relação ao tAtual
     double deslocamento = Velocidade*tempoDecorrido;
     double deltaT = Curva->CalculaT(deslocamento);
 
-    // cout << "deslocamento: " << deslocamento << " \n" << endl;
-    // cout << "deltaT: " << deltaT << " \n" << endl;
-
-    
     if(direcao == 1)
     tAtual += deltaT;
     else
     tAtual -= deltaT;
 
-    if(tAtual >= 1.0){
-        tAtual = 1.0;
-        //trocar a curva pra alguma aleatória conectada no ponto final
-    }
-    else if(tAtual <= 0.0){
-        tAtual = 0.0;
-        //trocar a curva pra alguma aleatória conectada no ponto inicial
+    //sorteia a prox curva
+    if (!jaSorteou) {
+        if ((direcao == 1 && tAtual >= 0.5) || (direcao == -1 && tAtual <= 0.5)) {
+            SorteiaProximaCurva(*this);     // passa essa instância para a função global
+            jaSorteou = true;
+        }
     }
 
-    Ponto posicaoAntiga = Posicao;
+    //troca as curvas
+    if(tAtual >= 1.0 || tAtual <= 0.0){
+        nroDaCurva = proxCurva;
+        direcao = proxDirecao;
+        
+        Curva = &vetBez.at(nroDaCurva); 
+
+        if (direcao == 1) {
+            tAtual = 0.0;
+        } else {
+            tAtual = 1.0;
+        }
+
+        jaSorteou = false; 
+    }
 
     Posicao = Curva->Calcula(tAtual);   //retorna o ponto na curva
 
-    double deltaX = Posicao.x - posicaoAntiga.x;
-    double deltaY = Posicao.y - posicaoAntiga.y;
+    //tfuturo pra não ficar dando umas "travadas"
+    double tFuturo = tAtual + 0.01;
 
-    Posicao.set(Posicao.x + deltaX, Posicao.y + deltaY);
+    Ponto PontoFuturo = Curva->Calcula(tFuturo);
 
-    double angulo = atan2(Posicao.x, Posicao.y);
+    double dX = PontoFuturo.x - Posicao.x;
+    double dY = PontoFuturo.y - Posicao.y;
 
-    double graus = angulo * 180/M_PI;    //transforma de radianos para graus
+    if (direcao == -1) {
+        dX = -dX;
+        dY = -dY;
+    }
 
-    Rotacao = graus;
+    if (dX != 0 || dY != 0) {
+        double angulo = atan2(dY, dX); 
+        double graus = angulo * 180.0 / M_PI;   //transforma de radianos pra graus
+        
+        Rotacao = graus;
+    }
 }
 
 void InstanciaBZ::desenha(){
@@ -57,6 +78,6 @@ void InstanciaBZ::desenha(){
         
         defineCor(cor);
         modelo();       //desenha o poligono
-        Curva->Traca();
+        // Curva->Traca();
     glPopMatrix();
 }
