@@ -49,7 +49,7 @@ using namespace std;
 
 #include "InstanciaBZ.h"
 
-#define N_INSTANCIAS 10
+#define N_INSTANCIAS 12
 
 // Limites logicos da area de desenho
 Ponto Min, Max;
@@ -107,6 +107,7 @@ void leCurvas(const char *nome){
 }
 
 void desenhaCarro(){
+    glLineWidth((GLfloat)1.0);
     Carro.desenhaPoligono();
 }
 
@@ -175,8 +176,8 @@ void init()
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.14f, 0.14f, 1.0f);
     
-    Min = Ponto (-5, -5);
-    Max = Ponto (5, 5);
+    Min = Ponto (-10, -10);
+    Max = Ponto (10, 10);
 }
 
 double nFrames=0;
@@ -215,9 +216,6 @@ void animate()
     }
     if (TempoTotal > 5.0)
     {
-        cout << "Tempo Acumulado: "  << TempoTotal << " segundos. " ;
-        cout << "Nros de Frames sem desenho: " << nFrames << endl;
-        cout << "FPS(sem desenho): " << nFrames/TempoTotal << endl;
         TempoTotal = 0;
         nFrames = 0;
     }
@@ -301,12 +299,14 @@ void display( void )
 	// Coloque aqui as chamadas das rotinas que desenham os objetos
 	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     
+    glPushMatrix();
     glColor3f(0,0,0); // R, G, B  [0..1]
     DesenhaEixos();
+    glPopMatrix();
 
     for(int i = 0; i<vetBez.size(); i++){
         glPushMatrix();
-        defineCor(Green);
+        defineCor(vetBez.at(i).cor);
         vetBez.at(i).Traca();
         glPopMatrix();
     }
@@ -315,12 +315,6 @@ void display( void )
 
     for(int i = 0; i < inimigos.size(); i++){
         inimigos.at(i).desenha();
-    }
-
-    if (FoiClicado)
-    {
-        PontoClicado.imprime("- Ponto no universo: ", "\n");
-        FoiClicado = false;
     }
     
 	glutSwapBuffers();
